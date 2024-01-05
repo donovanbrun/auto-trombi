@@ -16,7 +16,7 @@ const props = defineProps({
 const { student } = toRefs(props);
 const edit = () => props.edit(student.value);
 
-student.value.img = student.value.img || '/src/assets/blank.png';
+student.value.img = student.value.img || '/blank.png';
 </script>
 
 <template>
