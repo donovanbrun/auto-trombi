@@ -13,17 +13,18 @@ defineComponent({
 
 const students = ref<Student[]>(StudentService.getStudents());
 students.value.sort((a, b) => a.name.localeCompare(b.name));
-const selectedStudent = ref<Student>(new Student(0, '', '', '', ''));
+const selectedStudent = ref<Student>(new Student(0, '', '', '', '', ''));
 const showModal = ref(false);
 const editMode = ref(false);
+const search = ref('');
 
 const open = () => {
-    selectedStudent.value = new Student(0, '', '', '', '');
+    selectedStudent.value = new Student(0, '', '', '', '', '');
     showModal.value = true;
 }
 
 const close = () => {
-    selectedStudent.value = new Student(0, '', '', '', '');
+    selectedStudent.value = new Student(0, '', '', '', '', '');
     showModal.value = false;
     editMode.value = false;
 }
@@ -54,11 +55,23 @@ const editStudent = () => {
     close();
 }
 
+const onSearch = (event: any) => {
+    search.value = event.target.value;
+    if (search.value === '') {
+        students.value = StudentService.getStudents();
+        students.value.sort((a, b) => a.name.localeCompare(b.name));
+        return;
+    }
+    students.value = StudentService.getStudents().filter(s => s.name.toLowerCase().includes(search.value.toLowerCase()) || s.surname.toLowerCase().includes(search.value.toLowerCase()));
+    students.value.sort((a, b) => a.name.localeCompare(b.name));
+}
+
 </script>
 
 <template>
     <div class="header">
         <h1>Auto-trombi</h1>
+        <input type="text" placeholder="Search..." :value="search" v-on:change="onSearch" />
         <button @click="open()">Add</button>
     </div>
     <div class="list">
@@ -74,11 +87,31 @@ const editStudent = () => {
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background-color: #021f43;
 }
 
 h1 {
     color: white;
+    font-family: 'Roboto Light 300', sans-serif;
+}
+
+input {
+    width: 20rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    background-color: white;
+    color: var(--light-blue);
+    font-weight: bold;
+    font-family: 'Roboto Light 300', sans-serif;
+    font-size: 1rem;
+}
+
+input::placeholder {
+    color: var(--light-blue);
+}
+
+input:focus {
+    outline: var(--green) auto 1px;
 }
 
 .list {
@@ -90,16 +123,20 @@ h1 {
 }
 
 button {
-    padding: 0.5rem;
+    padding: 0.5rem 0.7rem;
     border-radius: 0.5rem;
     border: none;
-    background-color: #36b5d7;
-    color: white;
+    background-color: white;
+    box-shadow: var(--green) 0 0 0.5rem;
+    color: var(--light-blue);
     font-weight: bold;
     cursor: pointer;
+    transition: background-color 0.2s ease-in, transform 0.2s ease-in;
+    font-family: 'Roboto Light 300', sans-serif;
 }
 
 button:hover {
-    background-color: #b2c92d;
+    background-color: var(--green);
+    transform: scale(1.1);
 }
 </style>

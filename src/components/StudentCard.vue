@@ -23,22 +23,43 @@ student.value.img = student.value.img || '/blank.png';
     <div class="card">
         <button class="edit-button" @click="edit"><img src="../assets/icon/edit.png" width="20px" /></button>
         <img :src="student.img" width="200px" class="profile-picture">
-        <h2>{{ student.name }} {{ student.surname }}</h2>
-        <p>{{ student.company }}</p>
+        <div class="info">
+            <h2>{{ student.name }} {{ student.surname }}</h2>
+            <p>{{ student.company }}</p>
+        </div>
     </div>
 </template>
 
 <style scoped>
 .card {
     position: relative;
-    background-color: #36b5d7;
+    background-color: var(--dark-blue);
     padding: 1rem;
     width: fit-content;
     border-radius: 1rem;
-    box-shadow: 0 0 0.5rem #aaa;
+    box-shadow: 0 0 0.5rem #868686;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 0 0.5rem #fff;
+    opacity: 1;
+}
+
+.info {
+    padding: 0.5rem;
+    text-align: center;
+}
+
+h2,
+p {
+    color: white;
+    font-family: 'Roboto Light 300', sans-serif;
 }
 
 .edit-button {
@@ -52,7 +73,7 @@ student.value.img = student.value.img || '/blank.png';
     background-color: white;
     color: white;
     font-weight: bold;
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
     width: 32px;
     height: 32px;
     padding: 2px;
@@ -67,7 +88,7 @@ student.value.img = student.value.img || '/blank.png';
 }
 
 .edit-button:hover {
-    background-color: #b2c92d;
+    background-color: var(--green);
     cursor: pointer;
 }
 

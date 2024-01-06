@@ -2,3 +2,14 @@
     margin: 0;
     padding: 0;
 }
+
+:root {
+    --dark-blue: #021f43;
+    --light-blue: #36b5d7;
+    --green: #b2c92d;
+}
+
+#app {
+    min-height: 100vh;
+    background-image: linear-gradient(to right bottom, #021f43, #073860, #0d527c, #146e99, #208cb4, #009ebf, #00b0c5, #00c2c8, #00c9af, #45cd8a, #7cce5e, #b2c92d);
+}

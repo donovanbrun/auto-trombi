@@ -7,22 +7,43 @@
                 <h1 v-else>Add student</h1>
             </div>
             <div class="form">
-                <label for="name">Name</label>
-                <input type="text" id="name" v-model="student!.name" />
-                <label for="surname">Surname</label>
-                <input type="text" id="surname" v-model="student!.surname" />
-                <label for="company">Company</label>
-                <input type="text" id="company" v-model="student!.company" />
-
-                <div class="drop-zone" @dragover.prevent @dragenter.prevent @dragleave="dragging = false"
-                    @drop.prevent="handleDrop" :class="{ 'drag-over': dragging }">
-                    <p v-if="!image">Drop an image</p>
-                    <img v-if="image" :src="image" id="image" alt="Image preview" width="200px" />
+                <div class="section">
+                    <h2>Student</h2>
+                    <div class="input-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" v-model="student!.name" />
+                        <label for="surname">Surname</label>
+                        <input type="text" id="surname" v-model="student!.surname" />
+                    </div>
+                    <div>
+                        <p>Picture</p>
+                        <div class="drop-zone" @dragover.prevent @dragenter.prevent @dragleave="dragging = false"
+                            @drop.prevent="(e: any) => handleDrop(e, 'profile')" :class="{ 'drag-over': dragging }">
+                            <p v-if="!student!.img">Drop an image</p>
+                            <img v-if="student!.img" :src="student!.img" id="image" alt="Image preview" width="200px" />
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>Company</h2>
+                    <div class="input-group">
+                        <label for="company">Name</label>
+                        <input type="text" id="company" v-model="student!.company" />
+                    </div>
+                    <div>
+                        <p>Logo</p>
+                        <div class="drop-zone" @dragover.prevent @dragenter.prevent @dragleave="dragging = false"
+                            @drop.prevent="(e: any) => handleDrop(e, 'company')" :class="{ 'drag-over': dragging }">
+                            <p v-if="!student!.companyLogo">Drop an image</p>
+                            <img v-if="student!.companyLogo" :src="student!.companyLogo" id="image" alt="Image preview"
+                                width="200px" />
+                        </div>
+                    </div>
                 </div>
 
-                <button v-if="editMode" @click="edit()">Save</button>
-                <button v-else @click="add()">Add</button>
             </div>
+            <button v-if="editMode" @click="edit()">Save</button>
+            <button v-else @click="add()">Add</button>
         </div>
     </div>
 </template>
@@ -72,25 +93,26 @@ const closeModal = (event: any) => {
     }
 }
 
-const image = ref<any>(null);
 const dragging = ref(false);
 
-const handleDrop = (event: any) => {
+const handleDrop = (event: any, type: string) => {
     dragging.value = false;
 
     const file = event.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
-        previewImage(file);
+        previewImage(file, type);
     }
 }
 
-const previewImage = (file: any) => {
+const previewImage = (file: any, type: string) => {
     const reader = new FileReader();
 
     reader.onload = () => {
-        image.value = reader.result;
         if (reader.result && student.value)
-            student.value.img = reader.result.toString();
+            if (type === 'company')
+                student.value.companyLogo = reader.result.toString();
+            else
+                student.value.img = reader.result.toString();
     };
 
     reader.readAsDataURL(file);
@@ -116,11 +138,26 @@ const previewImage = (file: any) => {
     background-color: #fefefe;
     width: 80%;
     min-height: 30%;
+    max-height: 95vh;
     border-radius: 20px;
+    padding-bottom: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.modal-content::-webkit-scrollbar {
+    width: 0px;
+}
+
+h1,
+h2,
+p,
+label {
+    font-family: 'Roboto Light 300', sans-serif;
 }
 
 .header {
@@ -137,11 +174,23 @@ const previewImage = (file: any) => {
 
 .form {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     width: 100%;
     padding: 20px;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 10px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
     gap: 10px;
 }
 
@@ -169,10 +218,17 @@ button {
     color: white;
     font-size: 20px;
     cursor: pointer;
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.close-button:hover {
+    transform: scale(1.1);
+    color: red;
 }
 
 .drop-zone {
     border: 2px dashed #ccc;
+    margin-top: 5px;
     padding: 20px;
     text-align: center;
     cursor: pointer;
