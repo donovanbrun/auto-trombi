@@ -16,15 +16,15 @@ const props = defineProps({
 const { student } = toRefs(props);
 const edit = () => props.edit(student.value);
 
-student.value.img = student.value.img || '/blank.png';
+student.value.picture = student.value.picture || '/blank.png';
 </script>
 
 <template>
     <div class="card">
         <button class="edit-button" @click="edit"><img src="../assets/icon/edit.png" width="20px" /></button>
-        <img :src="student.img" width="200px" class="profile-picture">
+        <img :src="student.picture" width="200px" height="200px" class="profile-picture">
         <div class="info">
-            <h2>{{ student.name }} {{ student.surname }}</h2>
+            <h2>{{ student.lastname }} {{ student.firstname }}</h2>
             <p>{{ student.company }}</p>
         </div>
     </div>
@@ -44,11 +44,22 @@ student.value.img = student.value.img || '/blank.png';
     justify-content: space-between;
     opacity: 0.9;
     transition: opacity 0.3s ease;
+    animation: scaleAnimation 0.5s ease-out;
 }
 
 .card:hover {
     box-shadow: 0 0 0.5rem #fff;
     opacity: 1;
+}
+
+@keyframes scaleAnimation {
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 .info {

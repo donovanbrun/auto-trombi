@@ -1,17 +1,17 @@
 export default class Student {
     id: number = 0;
-    name: string = '';
-    surname: string = '';
+    lastname: string = '';
+    firstname: string = '';
     company: string = '';
-    img: string = '';
+    picture: string = '';
     companyLogo: string = '';
 
-    constructor(id: number, name: string, surname: string, company: string, img: string, companyLogo: string) {
+    constructor(id: number, lastname: string, firstname: string, company: string, picture: string, companyLogo: string) {
         this.id = id;
-        this.name = name;
-        this.surname = surname;
+        this.lastname = lastname;
+        this.firstname = firstname;
         this.company = company;
-        this.img = img;
+        this.picture = picture;
         this.companyLogo = companyLogo;
     }
 }

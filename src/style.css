@@ -13,3 +13,16 @@
     min-height: 100vh;
     background-image: linear-gradient(to right bottom, #021f43, #073860, #0d527c, #146e99, #208cb4, #009ebf, #00b0c5, #00c2c8, #00c9af, #45cd8a, #7cce5e, #b2c92d);
 }
+
+body::-webkit-scrollbar {
+    width: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: var(--green);
+    border-radius: 6px;
+}
+
+body::-webkit-scrollbar-track {
+    background-color: #00c9af;
+}

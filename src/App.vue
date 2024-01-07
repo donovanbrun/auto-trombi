@@ -12,7 +12,7 @@ defineComponent({
 })
 
 const students = ref<Student[]>(StudentService.getStudents());
-students.value.sort((a, b) => a.name.localeCompare(b.name));
+students.value.sort((a, b) => a.lastname.localeCompare(b.lastname));
 const selectedStudent = ref<Student>(new Student(0, '', '', '', '', ''));
 const showModal = ref(false);
 const editMode = ref(false);
@@ -40,6 +40,7 @@ const addStudent = () => {
     if (student) {
         student.id = Math.random() * Number.MAX_SAFE_INTEGER;
         students.value.push(student);
+        students.value.sort((a, b) => a.lastname.localeCompare(b.lastname));
         StudentService.setStudents(students.value);
     }
     close();
@@ -50,6 +51,17 @@ const editStudent = () => {
     if (student) {
         const index = students.value.findIndex(s => s.id === student.id);
         students.value[index] = student;
+        students.value.sort((a, b) => a.lastname.localeCompare(b.lastname));
+        StudentService.setStudents(students.value);
+    }
+    close();
+}
+
+const deleteStudent = () => {
+    const student = selectedStudent.value;
+    if (student) {
+        const index = students.value.findIndex(s => s.id === student.id);
+        students.value.splice(index, 1);
         StudentService.setStudents(students.value);
     }
     close();
@@ -59,11 +71,11 @@ const onSearch = (event: any) => {
     search.value = event.target.value;
     if (search.value === '') {
         students.value = StudentService.getStudents();
-        students.value.sort((a, b) => a.name.localeCompare(b.name));
+        students.value.sort((a, b) => a.lastname.localeCompare(b.lastname));
         return;
     }
-    students.value = StudentService.getStudents().filter(s => s.name.toLowerCase().includes(search.value.toLowerCase()) || s.surname.toLowerCase().includes(search.value.toLowerCase()));
-    students.value.sort((a, b) => a.name.localeCompare(b.name));
+    students.value = StudentService.getStudents().filter(s => s.lastname.toLowerCase().includes(search.value.toLowerCase()) || s.firstname.toLowerCase().includes(search.value.toLowerCase()));
+    students.value.sort((a, b) => a.lastname.localeCompare(b.lastname));
 }
 
 </script>
@@ -78,7 +90,7 @@ const onSearch = (event: any) => {
         <StudentCard v-for="student in students" :key="student.id" :student="student" :edit="edit" />
     </div>
     <StudentModal :show="showModal" :close="close" :edit-mode="editMode" :student="selectedStudent" :add="addStudent"
-        :edit="editStudent" />
+        :edit="editStudent" :delete="deleteStudent" />
 </template>
 
 <style scoped>
@@ -119,7 +131,7 @@ input:focus {
     flex-wrap: wrap;
     justify-content: center;
     gap: 2rem;
-    margin: 1rem;
+    padding: 1rem;
 }
 
 button {

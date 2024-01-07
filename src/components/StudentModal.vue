@@ -1,53 +1,3 @@
-<template>
-    <div class="modal" v-if="show" @click="(e) => closeModal(e)">
-        <div class="modal-content">
-            <div class="header">
-                <button @click="close()" class="close-button">X</button>
-                <h1 v-if="editMode">Edit student</h1>
-                <h1 v-else>Add student</h1>
-            </div>
-            <div class="form">
-                <div class="section">
-                    <h2>Student</h2>
-                    <div class="input-group">
-                        <label for="name">Name</label>
-                        <input type="text" id="name" v-model="student!.name" />
-                        <label for="surname">Surname</label>
-                        <input type="text" id="surname" v-model="student!.surname" />
-                    </div>
-                    <div>
-                        <p>Picture</p>
-                        <div class="drop-zone" @dragover.prevent @dragenter.prevent @dragleave="dragging = false"
-                            @drop.prevent="(e: any) => handleDrop(e, 'profile')" :class="{ 'drag-over': dragging }">
-                            <p v-if="!student!.img">Drop an image</p>
-                            <img v-if="student!.img" :src="student!.img" id="image" alt="Image preview" width="200px" />
-                        </div>
-                    </div>
-                </div>
-                <div class="section">
-                    <h2>Company</h2>
-                    <div class="input-group">
-                        <label for="company">Name</label>
-                        <input type="text" id="company" v-model="student!.company" />
-                    </div>
-                    <div>
-                        <p>Logo</p>
-                        <div class="drop-zone" @dragover.prevent @dragenter.prevent @dragleave="dragging = false"
-                            @drop.prevent="(e: any) => handleDrop(e, 'company')" :class="{ 'drag-over': dragging }">
-                            <p v-if="!student!.companyLogo">Drop an image</p>
-                            <img v-if="student!.companyLogo" :src="student!.companyLogo" id="image" alt="Image preview"
-                                width="200px" />
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <button v-if="editMode" @click="edit()">Save</button>
-            <button v-else @click="add()">Add</button>
-        </div>
-    </div>
-</template>
-
 <script setup lang="ts">
 import { ref, toRef } from 'vue';
 import Student from '../models/Student';
@@ -76,6 +26,10 @@ const props = defineProps({
     edit: {
         type: Function,
         required: true
+    },
+    delete: {
+        type: Function,
+        required: true
     }
 })
 
@@ -86,6 +40,7 @@ const editMode = toRef(props, 'editMode');
 const student = toRef(props, 'student');
 const add = () => props.add();
 const edit = () => props.edit();
+const deleteStudent = () => props.delete();
 
 const closeModal = (event: any) => {
     if (event.target.classList.contains('modal')) {
@@ -112,12 +67,66 @@ const previewImage = (file: any, type: string) => {
             if (type === 'company')
                 student.value.companyLogo = reader.result.toString();
             else
-                student.value.img = reader.result.toString();
+                student.value.picture = reader.result.toString();
     };
 
     reader.readAsDataURL(file);
 }
 </script>
+
+<template>
+    <div class="modal" v-if="show" @click="(e) => closeModal(e)">
+        <div class="modal-content">
+            <div class="header">
+                <button @click="close()" class="close-button">X</button>
+                <h1 v-if="editMode">Edit student</h1>
+                <h1 v-else>Add student</h1>
+            </div>
+            <div class="form">
+                <div class="section">
+                    <h2>Student</h2>
+                    <div class="input-group">
+                        <label for="name">Lastname</label>
+                        <input type="text" id="name" v-model="student!.lastname" />
+                        <label for="surname">Firstname</label>
+                        <input type="text" id="surname" v-model="student!.firstname" />
+                    </div>
+                    <div>
+                        <p>Picture</p>
+                        <div class="drop-zone" @dragover.prevent @dragenter.prevent @dragleave="dragging = false"
+                            @drop.prevent="(e: any) => handleDrop(e, 'profile')" :class="{ 'drag-over': dragging }">
+                            <p v-if="!student!.picture">Drop an image</p>
+                            <img v-if="student!.picture" :src="student!.picture" id="image" alt="Image preview"
+                                width="200px" />
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>Company</h2>
+                    <div class="input-group">
+                        <label for="company">Name</label>
+                        <input type="text" id="company" v-model="student!.company" />
+                    </div>
+                    <div>
+                        <p>Logo</p>
+                        <div class="drop-zone" @dragover.prevent @dragenter.prevent @dragleave="dragging = false"
+                            @drop.prevent="(e: any) => handleDrop(e, 'company')" :class="{ 'drag-over': dragging }">
+                            <p v-if="!student!.companyLogo">Drop an image</p>
+                            <img v-if="student!.companyLogo" :src="student!.companyLogo" id="image" alt="Image preview"
+                                width="200px" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-zone">
+                <button v-if="editMode" @click="edit()">Save</button>
+                <button v-else @click="add()">Add</button>
+                <button v-if="editMode" @click="deleteStudent()" class="deleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+</template>
 
 <style scoped>
 .modal {
@@ -134,6 +143,16 @@ const previewImage = (file: any, type: string) => {
     align-items: center;
 }
 
+@keyframes scaleAnimation {
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
 .modal-content {
     background-color: #fefefe;
     width: 80%;
@@ -147,6 +166,7 @@ const previewImage = (file: any, type: string) => {
     justify-content: space-between;
     overflow-x: hidden;
     overflow-y: auto;
+    animation: scaleAnimation 0.5s ease-in-out;
 }
 
 .modal-content::-webkit-scrollbar {
@@ -226,6 +246,10 @@ button {
     color: red;
 }
 
+.deleteBtn {
+    background-color: red;
+}
+
 .drop-zone {
     border: 2px dashed #ccc;
     margin-top: 5px;
@@ -236,5 +260,11 @@ button {
 
 .drag-over {
     background-color: #f0f8ff;
+}
+
+.btn-zone {
+    display: flex;
+    gap: 10px;
+    padding: 0px 20px;
 }
 </style>
